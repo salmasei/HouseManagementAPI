@@ -1,17 +1,17 @@
-
 using HouseManagementAPI.Caching;
 using HouseManagementAPI.Models;
 using Microsoft.Extensions.Caching.Memory;
 using Xunit;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace HouseManagementAPITests
 {
     public class HouseServiceTests
     {
         [Fact]
-        public void AddHouse_Should_Add_House()
+        public async Task AddHouse_Should_Add_House()
         {
             // Arrange
             var memoryCache = new MemoryCache(new MemoryCacheOptions());
@@ -25,15 +25,15 @@ namespace HouseManagementAPITests
             };
 
             // Act
-            service.AddHouse(house);
+            await service.AddHouseAsync(house);
 
             // Assert
-            var houses = service.GetHouses();
+            var houses = await service.GetHousesAsync();
             Assert.Contains(house, houses);
         }
 
         [Fact]
-        public void UpdateHouse_Should_Update_House()
+        public async Task UpdateHouse_Should_Update_House()
         {
             // Arrange
             var memoryCache = new MemoryCache(new MemoryCacheOptions());
@@ -46,7 +46,7 @@ namespace HouseManagementAPITests
                 UnitType = "house",
                 Features = new List<string> { "balcony" }
             };
-            service.AddHouse(initialHouse);
+            await service.AddHouseAsync(initialHouse);
 
             var updatedHouse = new HouseModel
             {
@@ -57,10 +57,10 @@ namespace HouseManagementAPITests
             };
 
             // Act
-            service.UpdateHouse("Test Address", updatedHouse);
+            await service.UpdateHouseAsync("Test Address", updatedHouse);
 
             // Assert
-            var houses = service.GetHouses();
+            var houses = await service.GetHousesAsync();
             Assert.DoesNotContain(initialHouse, houses); // Old house should be removed
             Assert.Contains(updatedHouse, houses); // Updated house should be present
             var houseInCache = houses.FirstOrDefault(h => h.Address == "Test Address");
@@ -71,7 +71,7 @@ namespace HouseManagementAPITests
         }
 
         [Fact]
-        public void UpdateHouse_With_NonExistent_Address_Should_Do_Nothing()
+        public async Task UpdateHouse_With_NonExistent_Address_Should_Do_Nothing()
         {
             // Arrange
             var memoryCache = new MemoryCache(new MemoryCacheOptions());
@@ -84,7 +84,7 @@ namespace HouseManagementAPITests
                 UnitType = "house",
                 Features = new List<string> { "balcony" }
             };
-            service.AddHouse(initialHouse);
+            await service.AddHouseAsync(initialHouse);
 
             var updatedHouse = new HouseModel
             {
@@ -95,16 +95,16 @@ namespace HouseManagementAPITests
             };
 
             // Act
-            service.UpdateHouse("NonExistent Address", updatedHouse);
+            await service.UpdateHouseAsync("NonExistent Address", updatedHouse);
 
             // Assert
-            var houses = service.GetHouses();
+            var houses = await service.GetHousesAsync();
             Assert.DoesNotContain(updatedHouse, houses); // Updated house should not be added
             Assert.Contains(initialHouse, houses); // The original house should still exist
         }
 
         [Fact]
-        public void DeleteHouse_Should_Remove_House_From_Cache()
+        public async Task DeleteHouse_Should_Remove_House_From_Cache()
         {
             // Arrange
             var memoryCache = new MemoryCache(new MemoryCacheOptions());
@@ -117,18 +117,18 @@ namespace HouseManagementAPITests
                 UnitType = "house",
                 Features = new List<string> { "balcony" }
             };
-            service.AddHouse(house);
+            await service.AddHouseAsync(house);
 
             // Act
-            service.DeleteHouse("Test Address");
+            await service.DeleteHouseAsync("Test Address");
 
             // Assert
-            var houses = service.GetHouses();
+            var houses = await service.GetHousesAsync();
             Assert.DoesNotContain(house, houses); // The house should be removed
         }
 
         [Fact]
-        public void DeleteHouse_With_NonExistent_Address_Should_Do_Nothing()
+        public async Task DeleteHouse_With_NonExistent_Address_Should_Do_Nothing()
         {
             // Arrange
             var memoryCache = new MemoryCache(new MemoryCacheOptions());
@@ -141,32 +141,32 @@ namespace HouseManagementAPITests
                 UnitType = "house",
                 Features = new List<string> { "balcony" }
             };
-            service.AddHouse(house);
+            await service.AddHouseAsync(house);
 
             // Act
-            service.DeleteHouse("NonExistent Address");
+            await service.DeleteHouseAsync("NonExistent Address");
 
             // Assert
-            var houses = service.GetHouses();
+            var houses = await service.GetHousesAsync();
             Assert.Contains(house, houses); // The house should still exist since the address was non-existent
         }
 
         [Fact]
-        public void GetHouses_Should_Return_EmptyList_When_No_Houses_Added()
+        public async Task GetHouses_Should_Return_EmptyList_When_No_Houses_Added()
         {
             // Arrange
             var memoryCache = new MemoryCache(new MemoryCacheOptions());
             var service = new InMemoryCacheService(memoryCache);
 
             // Act
-            var houses = service.GetHouses();
+            var houses = await service.GetHousesAsync();
 
             // Assert
             Assert.Empty(houses); // Should return an empty list if no houses are added
         }
 
         [Fact]
-        public void GetHouses_Should_Return_All_Added_Houses()
+        public async Task GetHouses_Should_Return_All_Added_Houses()
         {
             // Arrange
             var memoryCache = new MemoryCache(new MemoryCacheOptions());
@@ -188,9 +188,9 @@ namespace HouseManagementAPITests
             };
 
             // Act
-            service.AddHouse(house1);
-            service.AddHouse(house2);
-            var houses = service.GetHouses();
+            await service.AddHouseAsync(house1);
+            await service.AddHouseAsync(house2);
+            var houses = await service.GetHousesAsync();
 
             // Assert
             Assert.Equal(2, houses.Count);

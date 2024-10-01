@@ -1,9 +1,13 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using HouseManagementAPI.Models;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using HouseManagementAPI.Repositories;
 
 namespace HouseManagementAPI.Caching
 {
-    public class InMemoryCacheService
+    public class InMemoryCacheService : IHouseCacheService
     {
         private readonly IMemoryCache _cache;
         private readonly string _cacheKey = "houses";
@@ -13,39 +17,43 @@ namespace HouseManagementAPI.Caching
             _cache = memoryCache;
         }
 
-        public List<HouseModel> GetHouses()
+        public async Task<List<HouseModel>> GetHousesAsync()
         {
-            return _cache.GetOrCreate(_cacheKey, entry => new List<HouseModel>());
+            return await Task.FromResult(_cache.GetOrCreate(_cacheKey, entry => new List<HouseModel>()));
         }
 
-        public void AddHouse(HouseModel house)
+        public async Task AddHouseAsync(HouseModel house)
         {
-            var houses = GetHouses();
+            var houses = await GetHousesAsync();
             houses.Add(house);
             _cache.Set(_cacheKey, houses);
         }
 
-        public void UpdateHouse(string address, HouseModel updatedHouse)
+        public async Task<bool> UpdateHouseAsync(string address, HouseModel updatedHouse)
         {
-            var houses = GetHouses();
+            var houses = await GetHousesAsync();
             var house = houses.FirstOrDefault(h => h.Address == address);
             if (house != null)
             {
                 houses.Remove(house);
                 houses.Add(updatedHouse);
                 _cache.Set(_cacheKey, houses);
+                return true;
             }
+            return false;
         }
 
-        public void DeleteHouse(string address)
+        public async Task<bool> DeleteHouseAsync(string address)
         {
-            var houses = GetHouses();
+            var houses = await GetHousesAsync();
             var house = houses.FirstOrDefault(h => h.Address == address);
             if (house != null)
             {
                 houses.Remove(house);
                 _cache.Set(_cacheKey, houses);
+                return true;
             }
+            return false;
         }
     }
 }

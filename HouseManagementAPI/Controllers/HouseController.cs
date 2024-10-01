@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using HouseManagementAPI.Models;
 using HouseManagementAPI.Caching;
+using System.Threading.Tasks;
+using HouseManagementAPI.Repositories;
 
 namespace HouseManagementAPI.Controllers
 {
@@ -8,47 +10,87 @@ namespace HouseManagementAPI.Controllers
     [ApiController]
     public class HouseController : ControllerBase
     {
-        private readonly InMemoryCacheService _cacheService;
+        private readonly IHouseCacheService _houseService;
 
-        public HouseController(InMemoryCacheService cacheService)
+        public HouseController(IHouseCacheService houseService)
         {
-            _cacheService = cacheService;
+            _houseService = houseService;
         }
 
         [HttpGet]
-        public IActionResult GetHouses()
+        public async Task<IActionResult> GetHouses()
         {
-            var houses = _cacheService.GetHouses();
-            return Ok(houses);
+            try
+            {
+                var houses = await _houseService.GetHousesAsync();
+                return Ok(houses);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
 
         [HttpPost]
-        public IActionResult AddHouse([FromBody] HouseModel house)
+        public async Task<IActionResult> AddHouse([FromBody] HouseModel house)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            _cacheService.AddHouse(house);
-            return Ok("House added successfully.");
+
+            try
+            {
+                await _houseService.AddHouseAsync(house);
+                return Ok("House added successfully.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
 
         [HttpPut("{address}")]
-        public IActionResult UpdateHouse(string address, [FromBody] HouseModel updatedHouse)
+        public async Task<IActionResult> UpdateHouse(string address, [FromBody] HouseModel updatedHouse)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            _cacheService.UpdateHouse(address, updatedHouse);
-            return Ok("House updated successfully.");
+
+            try
+            {
+                var success = await _houseService.UpdateHouseAsync(address, updatedHouse);
+                if (!success)
+                {
+                    return NotFound("House not found.");
+                }
+
+                return Ok("House updated successfully.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
 
         [HttpDelete("{address}")]
-        public IActionResult DeleteHouse(string address)
+        public async Task<IActionResult> DeleteHouse(string address)
         {
-            _cacheService.DeleteHouse(address);
-            return Ok("House deleted successfully.");
+            try
+            {
+                var success = await _houseService.DeleteHouseAsync(address);
+                if (!success)
+                {
+                    return NotFound("House not found.");
+                }
+
+                return Ok("House deleted successfully.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
     }
 }

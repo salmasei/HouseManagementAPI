@@ -1,5 +1,6 @@
 using FluentValidation.AspNetCore;
 using HouseManagementAPI.Caching;
+using HouseManagementAPI.Repositories;
 using HouseManagementAPI.Validation;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddMemoryCache(); // Add memory cache
-builder.Services.AddScoped<InMemoryCacheService>(); // Register InMemoryCacheService
+builder.Services.AddScoped<IHouseCacheService, InMemoryCacheService>();
 
 // Add Swagger for API documentation
 builder.Services.AddEndpointsApiExplorer();
