@@ -3,11 +3,13 @@ using HouseManagementAPI.Models;
 using System.Threading.Tasks;
 using HouseManagementAPI.CQRS.Commands;
 using HouseManagementAPI.CQRS.Queries;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace HouseManagementAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [EnableRateLimiting("HouseLimiter")]
     public class HouseController : ControllerBase
     {
         private readonly AddHouseCommandHandler _addHouseHandler;
