@@ -4,7 +4,7 @@
 
 This repository contains a simple house management system API developed in three versions:
 1. **Basic CRUD**: Implements simple Create, Read, Update, Delete operations.
-2. **Async with Cache**: Adds cache and synchronization to handle multiple concurrent requests more efficiently.
+2. **Async with Cache**: Refactored controller methods to use asynchronous calls for handling I/O operations and multiple concurrent requests more efficiently.
 3. **CQRS with Clean Code**: Refactors the project using the CQRS (Command Query Responsibility Segregation) pattern and follows clean code principles.
 
 Each version demonstrates improvements in architecture and performance.
@@ -12,7 +12,7 @@ Each version demonstrates improvements in architecture and performance.
 ## Branches
 
 - `basic-crud`: Contains the initial version with basic CRUD operations.
-- `asynced-cache`: Implements caching and synchronization to avoid data inconsistency.
+- `asynced-cache`: Asynchronous calls for handling I/O.
 - `cqrs-clean-code`: Refactors the system to implement CQRS pattern and follow clean code principles.
 
 ## Services
