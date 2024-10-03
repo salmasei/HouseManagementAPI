@@ -30,14 +30,14 @@ This service handles CRUD operations for house data, including caching and notif
 ## Setup Instructions
 
 ### Prerequisites
-- [.NET 6 SDK](https://dotnet.microsoft.com/download/dotnet/6.0)
+- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
 - [Visual Studio 2022](https://visualstudio.microsoft.com/vs/)
 
 ### Running the Application
 
 1. **Clone the repository:**
     ```bash
-    git clone https://github.com/yourusername/HouseManagementAPI.git
+    git clone https://github.com/salmasei/HouseManagementAPI.git
     cd HouseManagementAPI
     ```
 
