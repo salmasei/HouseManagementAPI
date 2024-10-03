@@ -18,9 +18,8 @@ Each version demonstrates improvements in architecture and performance.
 ## Services
 
 ### House Management API
-This service handles CRUD operations for house data, including caching and notifications.
 
-- **Fields**: `HouseId`, `Address`, `Price`, `Rooms`, `Owner`
+- **Fields**: `address`, `numberOfFloors`, `unitType`, `features`
 - **Endpoints**:
   - `GET /House`
   - `POST /House`
