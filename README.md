@@ -77,7 +77,7 @@ Each version demonstrates improvements in architecture and performance.
 
 2. **Create a House:**
     - Use the `POST /House` endpoint to create a new house.
-    - Provide details like `Address`, `Price`, `Rooms`, and `Owner`.
+    - Provide details like `address`, `numberOfFloors`, `unitType` and `features`.
 
 3. **Update a House:**
     - Use the `PUT /House/{id}` endpoint to update house information.
